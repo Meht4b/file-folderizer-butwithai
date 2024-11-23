@@ -1,6 +1,10 @@
 import google.generativeai as genai
 import os
 import json
+
+
+
+
 '''
 categories = {'sheet music':"the name might the name of a song and will be of the .pdf format",
                 "wallpaper":"it will usually be the name of the artist and then it might describe a scenery and will be of image format",
@@ -12,9 +16,14 @@ categories = {'sheet music':"the name might the name of a song and will be of th
 files = ['One summers day joe hishaishi.pdf','alena-aename-mountains.jpg','FALLSEM2024-25_BSTS201P_SS_CH2024250103835_Reference_Material_I_09-08-2024_Rebus_Puzzles_2022_(4).pptx','mysql-installer-web-community-8.0.39.0.msi']
 '''
 
-def classify(categories:dict,files:list):
+def classify(categories:dict,files:list,api_key):
 
-    genai.configure(api_key='AIzaSyDXTxCjooLl2OLBIwGW_mO2pcKsORUXCWc')
+    if not api_key:
+        import key
+        api_key = key.api_key
+    
+
+    genai.configure(api_key=api_key)#type your api key
 
     model = genai.GenerativeModel("gemini-1.5-flash")
 
@@ -54,13 +63,7 @@ def classify(categories:dict,files:list):
 
     return json.loads('{'+response_clean+'}')
 
-    files_classified = {}
-    for i in response_clean.split(','):
-        i = i.strip()
-        i = i.split(':')
-        files_classified[i[0]] = i[1]
 
-    return files_classified
 
 def get_file_list(path):
     lis = []
@@ -83,6 +86,7 @@ def main():
     os.system('cls')
 
     path = input('enter path: ')
+    api_key = input('enter api key:')
     n = int(input('enter the number of different types: '))
     categories = {}
     for i in range(n):
@@ -113,7 +117,7 @@ def main():
                 
                 print(len(files),'left')
 
-                classified_dict = classify(categories,files_temp)
+                classified_dict = classify(categories,files_temp,api_key)
                 
                 for i in classified_dict:
                     
